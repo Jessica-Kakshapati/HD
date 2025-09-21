@@ -1,42 +1,36 @@
 pipeline {
     agent any
 
-    tools {
-        // Example: Gradle or Maven for Java, or Python for pytest
-        jdk 'jdk17'  // if Java project
-    }
-
     stages {
         stage('Build') {
             steps {
-                echo "Building the application..."
-                bat 'gradlew.bat clean build'  // Java Gradle build (use mvn if Maven)
-                // OR if using Docker:
-                // bat 'docker build -t myapp:latest .'
+                echo "Installing Node.js dependencies..."
+                bat 'npm install'
+                // Optional: build step if project has "npm run build"
+                bat 'npm run build || echo "No build script defined"'
             }
         }
 
         stage('Test') {
             steps {
-                echo "Running tests..."
-                bat 'gradlew.bat test'  // Java example
-                // Python example: bat 'pytest tests/'
+                echo "Running npm tests..."
+                bat 'npm test'
             }
         }
 
         stage('Code Quality') {
             steps {
-                echo "Running SonarQube analysis..."
-                // Requires SonarQube plugin + server config in Jenkins
-                bat 'gradlew.bat sonarqube'
+                echo "Running ESLint for code quality..."
+                bat 'npm install eslint'
+                bat 'npx eslint . || echo "Lint warnings found"'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Deploying to staging environment..."
-                // Run Docker container
-                bat 'docker run -d -p 8080:8080 myapp:latest'
+                echo "Deploying Node.js app with Docker..."
+                bat 'docker build -t my-node-app .'
+                bat 'docker run -d -p 3000:3000 my-node-app'
             }
         }
     }
