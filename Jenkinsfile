@@ -1,9 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "NodeJS"   // Make sure you configured NodeJS in Jenkins under "Global Tool Configuration"
-    }
 
     environment {
         // Docker image name
