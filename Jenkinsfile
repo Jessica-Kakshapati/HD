@@ -25,6 +25,15 @@ pipeline {
                 bat 'npm test'
             }
         }
+        stage('Code Quality') {
+            steps {
+                 echo "Running SonarQube analysis..."
+                 withSonarQubeEnv('SonarQubeServer') {
+                    bat "sonar-scanner -Dsonar.projectKey=mynodeapp -Dsonar.sources=. -Dsonar.host.url=%SONAR_HOST_URL% -Dsonar.login=%SONAR_TOKEN%"
+        }
+    }
+}
+
 
      
 
