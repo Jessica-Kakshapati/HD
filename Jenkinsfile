@@ -68,14 +68,26 @@ pipeline {
         }
 
         stage('Monitoring') {
-            steps {
-                echo "Checking container health..."
-                bat """
-                    docker ps -f name=%CONTAINER_NAME%
-                    powershell -Command "try { iwr http://localhost:3000 } catch { echo 'App not responding' }"
-                """
+    steps {
+        echo "Checking container status and app health..."
+        bat """
+            docker ps -f name=%CONTAINER_NAME%
+        """
+        powershell """
+            try {
+                $response = Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing
+                if ($response.StatusCode -eq 200) {
+                    Write-Host '✅ App is running and responding'
+                } else {
+                    Write-Host '⚠️ App returned status code ' $response.StatusCode
+                }
+            } catch {
+                Write-Host '❌ App not responding'
             }
-        }
+        """
+    }
+}
+
         
     }
 
