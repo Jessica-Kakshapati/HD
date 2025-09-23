@@ -93,7 +93,7 @@ pipeline {
                         try {
                             $response = Invoke-WebRequest -Uri http://localhost:3001 -UseBasicParsing -TimeoutSec 3
                             if ($response.StatusCode -eq 200) {
-                                Write-Host "✅ App is running and responding"
+                                Write-Host " App is running and responding"
                                 $success = $true
                                 break
                             }
@@ -104,7 +104,7 @@ pipeline {
                     }
 
                     if (-not $success) {
-                        Write-Host "❌ App did not respond after $($maxRetries * $delay) seconds"
+                        Write-Host " App did not respond after $($maxRetries * $delay) seconds"
                         exit 1
                     }
                 '''
