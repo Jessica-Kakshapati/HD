@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "mynodeapp"
+        CONTAINER_NAME = "mynodeapp_container"
         SONAR_TOKEN = credentials('SONAR_TOKEN') 
     }
 
@@ -69,7 +70,26 @@ pipeline {
                 '''
             }
         }
+        stage('Release') {
+            steps {
+                echo "Tagging Docker image locally as release..."
+                bat """
+                    docker tag %DOCKER_IMAGE% %DOCKER_IMAGE%:release
+                    docker images | findstr %DOCKER_IMAGE%
+                """
+            }
+        }
 
+        stage('Monitoring') {
+            steps {
+                echo "Checking container health..."
+                bat """
+                    docker ps -f name=%CONTAINER_NAME%
+                    powershell -Command "try { iwr http://localhost:3000 } catch { echo 'App not responding' }"
+                """
+            }
+        }
+        
     }
 
     post {
