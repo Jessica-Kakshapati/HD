@@ -46,22 +46,24 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                echo 'Starting services with Docker Compose...'
-                bat """
-                REM Stop and remove any existing containers for this project
-                docker ps -a -q --filter "name=goof-new" | ForEach-Object { docker rm -f $_ } 
-                docker ps -a -q --filter "name=goof-mysql-new" | ForEach-Object { docker rm -f $_ }
-                docker ps -a -q --filter "name=goof-mongo-new" | ForEach-Object { docker rm -f $_ }
-                REM Remove old networks if any
-                docker network ls --filter "name=goof-network" -q | ForEach-Object { docker network rm $_ }
-                REM Build images
-                docker-compose build
-                REM Start containers in detached mode
-                docker-compose up -d
-                """
-                }
-        }
+    steps {
+        echo 'Starting services with Docker Compose...'
+        bat """
+            REM Stop and remove existing containers
+            docker rm -f goof-new goof-mysql-new goof-mongo-new || echo "No containers to remove"
+
+            REM Remove old network if it exists
+            docker network rm 82cdevsecops_goof-network || echo "No network to remove"
+
+            REM Build images
+            docker-compose build
+
+            REM Start containers
+            docker-compose up -d
+        """
+    }
+}
+
 
 
         stage('Release') {
