@@ -3,7 +3,7 @@ version: "3.9"  # Use latest version for better compatibility
 services:
   goof:
     build: .
-    container_name: goof-mongo-new
+    container_name: goof-new
     environment:
       - DOCKER=1
       - MONGO_URI=mongodb://goof-mongo:27017/acme
