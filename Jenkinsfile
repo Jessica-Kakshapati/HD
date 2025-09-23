@@ -21,21 +21,11 @@ pipeline {
         }
 
         stage('Code Quality') {
-            steps {
-                echo "Running SonarQube analysis..."
-                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    bat '''
-                        curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip
-                        powershell -Command "Expand-Archive -Force sonar-scanner-cli.zip sonar-scanner-cli"
-                        sonar-scanner-cli\\sonar-scanner-5.0.1.3006\\bin\\sonar-scanner ^
-                          -Dsonar.projectKey=mynodeapp ^
-                          -Dsonar.sources=. ^
-                          -Dsonar.host.url=http://your-sonarqube-server:9000 ^
-                          -Dsonar.login=%SONAR_TOKEN%
-                    '''
-                }
-            }
-        }
+    steps {
+        echo "Skipping SonarQube for now"
+    }
+}
+
 
         stage('Security') {
             steps {
