@@ -15,15 +15,9 @@ pipeline {
             }
         }
 
-        stage('Test') {
+          stage('Test') {
             steps {
-                echo "Running unit tests with coverage..."
-                bat 'npm test -- --coverage'
-            }
-            post {
-                always {
-                    junit '**/test-results.xml' // optional if Jest is configured to output junit
-                }
+                bat 'npm test'
             }
         }
 
