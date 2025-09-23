@@ -27,8 +27,7 @@ pipeline {
         }
 
         stage('Code Quality') {
-    stage('Code Quality') {
-    steps {
+            steps {
         echo "Running SonarCloud analysis..."
         withSonarQubeEnv('SonarCloud') { // Name from Jenkins global config
             bat """
