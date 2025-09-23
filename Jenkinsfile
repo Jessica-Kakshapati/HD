@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "mynodeapp"
-        CONTAINER_NAME = "mynodeapp_container"
-        SONAR_TOKEN = credentials('SONAR_TOKEN') 
+        DOCKER_IMAGE = "hd"
+        CONTAINER_NAME = "hd_container"
     }
 
     stages {
@@ -48,12 +47,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo "Building and running Docker container..."
+                echo "Starting services with Docker Compose..."
                 bat '''
-                    docker build -t %DOCKER_IMAGE% .
-                    docker stop mynodeapp_container || echo "No container running"
-                    docker rm mynodeapp_container || echo "No container to remove"
-                    docker run -d -p 3000:3000 --name mynodeapp_container %DOCKER_IMAGE%
+                    docker-compose down || echo "No existing services"
+                    docker-compose build
+                    docker-compose up -d
                 '''
             }
         }
@@ -68,27 +66,41 @@ pipeline {
         }
 
         stage('Monitoring') {
-    steps {
-        echo "Checking container status and app health..."
-        
-        // Check if container is running
-        bat "docker ps -f name=%CONTAINER_NAME%"
+            steps {
+                echo "Checking container status and app health..."
 
-        // Check if app responds on port 3000
-        powershell '''
-            try {
-                $response = Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing
-                if ($response.StatusCode -eq 200) {
-                    Write-Host "App is running and responding"
-                } else {
-                    Write-Host "App returned status code $($response.StatusCode)"
-                }
-            } catch {
-                Write-Host "App not responding"
+                // Check if container is running
+                bat "docker ps -f name=%CONTAINER_NAME%"
+
+                // Wait for the app to respond on port 3001 (matches docker-compose)
+                powershell '''
+                    $maxRetries = 10
+                    $delay = 5
+                    $success = $false
+
+                    for ($i=0; $i -lt $maxRetries; $i++) {
+                        try {
+                            $response = Invoke-WebRequest -Uri http://localhost:3001 -UseBasicParsing -TimeoutSec 3
+                            if ($response.StatusCode -eq 200) {
+                                Write-Host "App is running and responding"
+                                $success = $true
+                                break
+                            }
+                        } catch {
+                            Write-Host "App not responding yet. Retrying in $delay seconds..."
+                        }
+                        Start-Sleep -Seconds $delay
+                    }
+
+                    if (-not $success) {
+                        Write-Host "App did not respond after $($maxRetries * $delay) seconds"
+                        exit 1
+                    }
+                '''
             }
-        '''
+        }
+
     }
-}
 
         
     }

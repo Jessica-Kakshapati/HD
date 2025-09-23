@@ -1,27 +1,54 @@
-version: "2"
+version: "3.9"  # Use latest version for better compatibility
+
 services:
   goof:
     build: .
     container_name: goof
     environment:
       - DOCKER=1
+      - MONGO_URI=mongodb://goof-mongo:27017/acme
+      - MYSQL_HOST=goof-mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=acme
     ports:
-      - "3001:3001"
-      - "9229:9229"
-    links:
-      - goof-mongo
+      - "3001:3001"  # App port
+      - "9229:9229"  # Optional debugging
     depends_on:
       - goof-mongo
+      - goof-mysql
+    networks:
+      - goof-network
+
   goof-mongo:
-    container_name: goof-mongo
     image: mongo:3
+    container_name: goof-mongo
     ports:
       - "27017:27017"
-  good-mysql:
-    container_name: goof-mysql
+    networks:
+      - goof-network
+    volumes:
+      - mongo-data:/data/db  # Persist MongoDB data
+
+  goof-mysql:
     image: mysql:5
+    container_name: goof-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: acme
     ports:
       - "3306:3306"
+    networks:
+      - goof-network
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persist MySQL data
+
+# Named volumes to persist data
+volumes:
+  mongo-data:
+  mysql-data:
+
+# Custom network
+networks:
+  goof-network:
+    driver: bridge
