@@ -3,9 +3,15 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "mynodeapp"
+        SONAR_TOKEN = credentials('SONAR_TOKEN') 
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         stage('Build') {
             steps {
                 echo "Installing dependencies..."
@@ -21,9 +27,22 @@ pipeline {
         }
 
         stage('Code Quality') {
+    stage('Code Quality') {
     steps {
-        echo "Skipping SonarQube for now"
+        echo "Running SonarCloud analysis..."
+        withSonarQubeEnv('SonarCloud') { // Name from Jenkins global config
+            bat """
+                sonar-scanner ^
+                  -Dsonar.projectKey=Jessica-Kakshapati_HD ^
+                  -Dsonar.organization=jessica-kakshapati ^
+                  -Dsonar.sources=src ^
+                  -Dsonar.host.url=https://sonarcloud.io ^
+                  -Dsonar.login=%SONAR_TOKEN%
+            """
+        }
     }
+}
+
 }
 
 
