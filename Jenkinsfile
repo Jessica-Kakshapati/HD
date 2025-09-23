@@ -46,15 +46,18 @@ pipeline {
             }
         }
 
-
-        stage('Monitoring') {
+        stage('Deploy') {
             steps {
-                echo "Checking application health..."
+                echo "Building and running Docker container..."
                 bat '''
-                    curl -f http://localhost:3000 || echo "App is down!"
+                    docker build -t %DOCKER_IMAGE% .
+                    docker stop mynodeapp_container || echo "No container running"
+                    docker rm mynodeapp_container || echo "No container to remove"
+                    docker run -d -p 3000:3000 --name mynodeapp_container %DOCKER_IMAGE%
                 '''
             }
         }
+
     }
 
     post {
