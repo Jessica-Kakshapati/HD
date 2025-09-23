@@ -79,12 +79,12 @@ pipeline {
             try {
                 $response = Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing
                 if ($response.StatusCode -eq 200) {
-                    Write-Host "✅ App is running and responding"
+                    Write-Host "App is running and responding"
                 } else {
-                    Write-Host "⚠️ App returned status code $($response.StatusCode)"
+                    Write-Host "App returned status code $($response.StatusCode)"
                 }
             } catch {
-                Write-Host "❌ App not responding"
+                Write-Host "App not responding"
             }
         '''
     }
