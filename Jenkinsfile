@@ -27,9 +27,9 @@ pipeline {
         }
 
         stage('Code Quality') {
-            steps {
+    steps {
         echo "Running SonarCloud analysis..."
-        withSonarQubeEnv('SonarCloud') { // Name from Jenkins global config
+        withSonarQubeEnv('SonarCloud') { // Jenkins Sonar config name
             bat """
                 sonar-scanner ^
                   -Dsonar.projectKey=Jessica-Kakshapati_HD ^
@@ -42,7 +42,6 @@ pipeline {
     }
 }
 
-}
 
 
         stage('Security') {
