@@ -46,17 +46,6 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo "Building and running Docker container..."
-                bat '''
-                    docker build -t %DOCKER_IMAGE% .
-                    docker stop mynodeapp_container || echo "No container running"
-                    docker rm mynodeapp_container || echo "No container to remove"
-                    docker run -d -p 3000:3000 --name mynodeapp_container %DOCKER_IMAGE%
-                '''
-            }
-        }
 
         stage('Monitoring') {
             steps {
