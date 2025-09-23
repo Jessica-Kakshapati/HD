@@ -39,7 +39,7 @@ pipeline {
                         echo "Total vulnerabilities: ${report.metadata.vulnerabilities.total}"
                         echo "Critical: ${report.metadata.vulnerabilities.critical}, High: ${report.metadata.vulnerabilities.high}"
                         if (report.metadata.vulnerabilities.critical > 0) {
-                            echo "⚠️ Critical issues found! Consider updating dependencies."
+                            echo "Critical issues found! Consider updating dependencies."
                         }
                     }
                 }
