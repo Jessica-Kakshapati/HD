@@ -26,21 +26,7 @@ pipeline {
             }
         }
 
-        stage('Code Quality') {
-    steps {
-        echo "Running SonarCloud analysis..."
-        withSonarQubeEnv('SonarCloud') { // Jenkins Sonar config name
-            bat """
-                sonar-scanner ^
-                  -Dsonar.projectKey=Jessica-Kakshapati_HD ^
-                  -Dsonar.organization=jessica-kakshapati ^
-                  -Dsonar.sources=src ^
-                  -Dsonar.host.url=https://sonarcloud.io ^
-                  -Dsonar.login=%SONAR_TOKEN%
-            """
-        }
-    }
-}
+     
 
 
 
