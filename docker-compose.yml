@@ -6,7 +6,7 @@ services:
     container_name: goof-new
     environment:
       - DOCKER=1
-      - MONGO_URI=mongodb://goof-mongo-new:27017/acme
+      - MONGO_URI=mongodb://goof-mongo-new:27018/acme
       - MYSQL_HOST=goof-mysql-new
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
@@ -24,7 +24,7 @@ services:
     image: mongo:3
     container_name: goof-mongo-new
     ports:
-      - "27017:27017"
+      - "27018:27017"   # host:container
     networks:
       - goof-network
     volumes:
@@ -37,7 +37,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: acme
     ports:
-      - "3306:3306"
+      - "3307:3306"     # host:container
     networks:
       - goof-network
     volumes:
